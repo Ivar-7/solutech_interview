@@ -20,15 +20,45 @@ class Visit {
   });
 
   factory Visit.fromJson(Map<String, dynamic> json) {
+    // Safely handle activities_done field
+    List<int> parseActivities() {
+      try {
+        if (json['activities_done'] == null) return [];
+        
+        final activities = json['activities_done'] as List;
+        return activities.map<int>((item) {
+          if (item == null) return 0;
+          if (item is int) return item;
+          // Convert string to int
+          return int.tryParse(item.toString()) ?? 0;
+        }).toList();
+      } catch (e) {
+        // print('Error parsing activities_done: $e');
+        return [];
+      }
+    }
+    
+    // Safely parse DateTime fields
+    DateTime parseDateTimeField(String fieldName) {
+      try {
+        return json[fieldName] != null 
+            ? DateTime.parse(json[fieldName]) 
+            : DateTime.now();
+      } catch (e) {
+        // print('Error parsing $fieldName: $e');
+        return DateTime.now();
+      }
+    }
+    
     return Visit(
-      id: json['id'],
-      customerId: json['customer_id'],
-      visitDate: DateTime.parse(json['visit_date']),
-      status: json['status'],
-      location: json['location'],
-      notes: json['notes'] ?? '',
-      activitiesDone: (json['activities_done'] as List?)?.map((e) => int.tryParse(e.toString()) ?? 0).toList() ?? [],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['id'] ?? 0,
+      customerId: json['customer_id'] ?? 0,
+      visitDate: parseDateTimeField('visit_date'),
+      status: json['status']?.toString() ?? '',
+      location: json['location']?.toString() ?? '',
+      notes: json['notes']?.toString() ?? '',
+      activitiesDone: parseActivities(),
+      createdAt: parseDateTimeField('created_at'),
     );
   }
 

@@ -11,9 +11,19 @@ class Activity {
 
   factory Activity.fromJson(Map<String, dynamic> json) {
     return Activity(
-      id: json['id'],
-      description: json['description'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['id'] ?? 0,
+      description: json['description']?.toString() ?? '',
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at']) 
+          : DateTime.now(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'description': description,
+      'created_at': createdAt.toIso8601String(),
+    };
   }
 }
