@@ -1,12 +1,12 @@
 import 'package:go_router/go_router.dart';
-import 'package:solutech_interview/screens/customer_list_screen.dart';
-import 'package:solutech_interview/screens/customer_form_screen.dart';
-import 'package:solutech_interview/screens/visit_list_screen.dart';
-import 'package:solutech_interview/screens/visit_form_screen.dart';
-import 'package:solutech_interview/screens/visit_detail_screen.dart';
-import 'package:solutech_interview/screens/visit_stats_screen.dart';
-import 'package:solutech_interview/screens/activity_list_screen.dart';
-import 'package:solutech_interview/screens/activity_form_screen.dart';
+import 'package:solutech_interview/screens/customer/customer_list_screen.dart';
+import 'package:solutech_interview/screens/customer/customer_form_screen.dart';
+import 'package:solutech_interview/screens/visit/visit_list_screen.dart';
+import 'package:solutech_interview/screens/visit/visit_form_screen.dart';
+import 'package:solutech_interview/screens/visit/visit_detail_screen.dart';
+import 'package:solutech_interview/screens/visit/visit_stats_screen.dart';
+import 'package:solutech_interview/screens/activity/activity_list_screen.dart';
+import 'package:solutech_interview/screens/activity/activity_form_screen.dart';
 import 'package:solutech_interview/models/visit.dart';
 import 'main.dart';
 

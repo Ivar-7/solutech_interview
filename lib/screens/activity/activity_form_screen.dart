@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/activity.dart';
-import '../providers/activity_provider.dart';
+import '../../models/activity.dart';
+import '../../providers/activity_provider.dart';
 
 class ActivityFormScreen extends StatefulWidget {
   final Activity? activity;
