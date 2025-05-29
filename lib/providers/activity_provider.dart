@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/activity.dart';
-import '../services/api_service.dart';
+import '../services/activity_service.dart';
 
 class ActivityProvider extends ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final ActivityService _activityService = ActivityService();
   List<Activity> _activities = [];
   bool _isLoading = false;
   String? _error;
@@ -17,7 +17,49 @@ class ActivityProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _activities = await _apiService.fetchActivities();
+      _activities = await _activityService.fetchActivities();
+    } catch (e) {
+      _error = e.toString();
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> addActivity(String description) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final activity = await _activityService.createActivity(description);
+      _activities.add(activity);
+    } catch (e) {
+      _error = e.toString();
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateActivity(int id, String description) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final updated = await _activityService.updateActivity(id, description);
+      final index = _activities.indexWhere((a) => a.id == id);
+      if (index != -1) {
+        _activities[index] = updated;
+      }
+    } catch (e) {
+      _error = e.toString();
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> deleteActivity(int id) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await _activityService.deleteActivity(id);
+      _activities.removeWhere((a) => a.id == id);
     } catch (e) {
       _error = e.toString();
     }

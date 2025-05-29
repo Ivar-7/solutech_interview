@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/visit.dart';
-import '../services/api_service.dart';
+import '../services/visit_service.dart';
 
 class VisitProvider extends ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final VisitService _visitService = VisitService();
   List<Visit> _visits = [];
   bool _isLoading = false;
   String? _error;
@@ -17,7 +17,7 @@ class VisitProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _visits = await _apiService.fetchVisits();
+      _visits = await _visitService.fetchVisits();
     } catch (e) {
       _error = e.toString();
     }
@@ -29,7 +29,7 @@ class VisitProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final newVisit = await _apiService.createVisit(visit);
+      final newVisit = await _visitService.createVisit(visit);
       _visits.add(newVisit);
     } catch (e) {
       _error = e.toString();
@@ -42,7 +42,7 @@ class VisitProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final updated = await _apiService.updateVisit(visit);
+      final updated = await _visitService.updateVisit(visit);
       final idx = _visits.indexWhere((v) => v.id == visit.id);
       if (idx != -1) _visits[idx] = updated;
     } catch (e) {
@@ -56,7 +56,7 @@ class VisitProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      await _apiService.deleteVisit(id);
+      await _visitService.deleteVisit(id);
       _visits.removeWhere((v) => v.id == id);
     } catch (e) {
       _error = e.toString();

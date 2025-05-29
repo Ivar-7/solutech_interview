@@ -5,27 +5,35 @@ import 'package:solutech_interview/screens/visit_list_screen.dart';
 import 'package:solutech_interview/screens/visit_form_screen.dart';
 import 'package:solutech_interview/screens/visit_detail_screen.dart';
 import 'package:solutech_interview/screens/visit_stats_screen.dart';
+import 'package:solutech_interview/screens/activity_list_screen.dart';
+import 'package:solutech_interview/screens/activity_form_screen.dart';
 import 'package:solutech_interview/models/visit.dart';
+import 'main.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const CustomerListScreen(),
+    ShellRoute(
+      builder: (context, state, child) => AppShell(child: child),
       routes: [
         GoRoute(
-          path: 'customer/add',
-          builder: (context, state) => const CustomerFormScreen(),
+          path: '/',
+          builder: (context, state) => const CustomerListScreen(),
+          routes: [
+            GoRoute(
+              path: 'customer/add',
+              builder: (context, state) => const CustomerFormScreen(),
+            ),
+            GoRoute(
+              path: 'customer/edit/:id',
+              builder: (context, state) {
+                // fetch customer by id or pass via extra
+                return CustomerFormScreen();
+              },
+            ),
+          ],
         ),
         GoRoute(
-          path: 'customer/edit/:id',
-          builder: (context, state) {
-            // fetch customer by id or pass via extra
-            return CustomerFormScreen();
-          },
-        ),
-        GoRoute(
-          path: 'visits',
+          path: '/visits',
           builder: (context, state) => const VisitListScreen(),
           routes: [
             GoRoute(
@@ -61,6 +69,23 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'stats',
               builder: (context, state) => const VisitStatsScreen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/activities',
+          builder: (context, state) => const ActivityListScreen(),
+          routes: [
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const ActivityFormScreen(),
+            ),
+            GoRoute(
+              path: 'edit/:id',
+              builder: (context, state) {
+                // fetch activity by id or pass via extra
+                return ActivityFormScreen();
+              },
             ),
           ],
         ),
