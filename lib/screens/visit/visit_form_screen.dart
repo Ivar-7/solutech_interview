@@ -79,20 +79,30 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
         title: Text(widget.visit == null ? 'Add Visit' : 'Edit Visit'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
+              const Text('Visit Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _locationController,
-                decoration: const InputDecoration(labelText: 'Location'),
+                decoration: InputDecoration(
+                  labelText: 'Location',
+                  prefixIcon: Icon(Icons.location_on),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 validator: (value) => value == null || value.trim().isEmpty ? 'Location required' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
-                decoration: const InputDecoration(labelText: 'Notes'),
+                decoration: InputDecoration(
+                  labelText: 'Notes',
+                  prefixIcon: Icon(Icons.notes),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
@@ -102,10 +112,11 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
                     .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                     .toList(),
                 onChanged: (val) => setState(() => _status = val ?? 'Pending'),
-                decoration: const InputDecoration(labelText: 'Status'),
+                decoration: const InputDecoration(labelText: 'Status', prefixIcon: Icon(Icons.info_outline)),
               ),
               const SizedBox(height: 16),
               ListTile(
+                contentPadding: EdgeInsets.zero,
                 title: Text('Visit Date: ${_visitDate?.toLocal().toString().split(' ')[0]}'),
                 trailing: Icon(Icons.calendar_today),
                 onTap: () async {
@@ -118,8 +129,9 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
                   if (picked != null) setState(() => _visitDate = picked);
                 },
               ),
-              const SizedBox(height: 16),
-              Text('Activities', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 24),
+              const Text('Activities Completed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: activities.map((a) {
@@ -139,14 +151,20 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               _isSubmitting
                   ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
+                        icon: Icon(widget.visit == null ? Icons.add : Icons.save),
                         onPressed: _submit,
-                        child: Text(widget.visit == null ? 'Add' : 'Update'),
+                        label: Text(widget.visit == null ? 'Add Visit' : 'Update Visit'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
                       ),
                     ),
             ],

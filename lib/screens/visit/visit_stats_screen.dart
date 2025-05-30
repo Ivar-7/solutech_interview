@@ -20,14 +20,17 @@ class VisitStatsScreen extends StatelessWidget {
           children: [
             const Text('Your Visit Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _StatCard(label: 'Total', value: visits.length, color: Colors.blue),
-                _StatCard(label: 'Completed', value: completed, color: Colors.green),
-                _StatCard(label: 'Pending', value: pending, color: Colors.orange),
-                _StatCard(label: 'Cancelled', value: cancelled, color: Colors.red),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _StatCard(label: 'Total', value: visits.length, color: Colors.blue),
+                  _StatCard(label: 'Completed', value: completed, color: Colors.green),
+                  _StatCard(label: 'Pending', value: pending, color: Colors.orange),
+                  _StatCard(label: 'Cancelled', value: cancelled, color: Colors.red),
+                ],
+              ),
             ),
             const SizedBox(height: 32),
             // Optionally add more charts or breakdowns here

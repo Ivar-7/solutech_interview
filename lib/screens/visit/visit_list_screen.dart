@@ -11,6 +11,9 @@ class VisitListScreen extends StatefulWidget {
 }
 
 class _VisitListScreenState extends State<VisitListScreen> {
+  String _search = '';
+  String _statusFilter = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -32,11 +35,6 @@ class _VisitListScreenState extends State<VisitListScreen> {
               context.go('/visits/stats');
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: () => Provider.of<VisitProvider>(context, listen: false).loadVisits(),
-          ),
         ],
       ),
       body: Consumer<VisitProvider>(
@@ -47,12 +45,19 @@ class _VisitListScreenState extends State<VisitListScreen> {
           if (provider.error != null) {
             return Center(child: Text('Error: ${provider.error}'));
           }
-          if (provider.visits.isEmpty) {
+          final visits = provider.visits.where((v) {
+            final matchesSearch = _search.isEmpty ||
+              v.location.toLowerCase().contains(_search.toLowerCase()) ||
+              v.notes.toLowerCase().contains(_search.toLowerCase());
+            final matchesStatus = _statusFilter == 'All' || v.status == _statusFilter;
+            return matchesSearch && matchesStatus;
+          }).toList();
+          if (visits.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('No visits yet. Start by adding your first visit!', style: TextStyle(fontSize: 18)),
+                  const Text('No visits found.', style: TextStyle(fontSize: 18)),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.add),
@@ -63,28 +68,95 @@ class _VisitListScreenState extends State<VisitListScreen> {
               ),
             );
           }
-          return ListView.separated(
-            padding: const EdgeInsets.only(top: 16, bottom: 80),
-            itemCount: provider.visits.length,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (context, index) {
-              final visit = provider.visits[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                child: ListTile(
-                  title: Text('Visit #${visit.id} - ${visit.status}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Date: ${visit.visitDate.toLocal().toString().split(' ')[0]}\nLocation: ${visit.location}'),
-                  onTap: () {
-                    context.go('/visits/detail/${visit.id}');
-                  },
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Edit Visit',
-                    onPressed: () => context.go('/visits/edit/${visit.id}'),
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search by location or notes...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onChanged: (val) => setState(() => _search = val),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      FilterChip(
+                        label: const Text('All'),
+                        selected: _statusFilter == 'All',
+                        onSelected: (_) => setState(() => _statusFilter = 'All'),
+                      ),
+                      const SizedBox(width: 8),
+                      FilterChip(
+                        label: const Text('Pending'),
+                        selected: _statusFilter == 'Pending',
+                        onSelected: (_) => setState(() => _statusFilter = 'Pending'),
+                      ),
+                      const SizedBox(width: 8),
+                      FilterChip(
+                        label: const Text('Completed'),
+                        selected: _statusFilter == 'Completed',
+                        onSelected: (_) => setState(() => _statusFilter = 'Completed'),
+                      ),
+                      const SizedBox(width: 8),
+                      FilterChip(
+                        label: const Text('Cancelled'),
+                        selected: _statusFilter == 'Cancelled',
+                        onSelected: (_) => setState(() => _statusFilter = 'Cancelled'),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
+              ),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(top: 8, bottom: 80),
+                  itemCount: visits.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final visit = visits[index];
+                    return Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        leading: CircleAvatar(
+                          backgroundColor: visit.status == 'Completed'
+                              ? Colors.green
+                              : visit.status == 'Pending'
+                                  ? Colors.orange
+                                  : Colors.red,
+                          child: Icon(Icons.event_note, color: Colors.white),
+                        ),
+                        title: Text(
+                          visit.location,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Date: ${visit.visitDate.toLocal().toString().split(' ')[0]}', softWrap: true),
+                            Text('Status: ${visit.status}', softWrap: true),
+                            if (visit.notes.isNotEmpty) Text('Notes: ${visit.notes}', softWrap: true),
+                          ],
+                        ),
+                        trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.primary),
+                        onTap: () {
+                          context.go('/visits/detail/${visit.id}');
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
