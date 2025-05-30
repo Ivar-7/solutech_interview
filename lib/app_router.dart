@@ -18,76 +18,74 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/',
           builder: (context, state) => const VisitListScreen(),
+        ),
+        GoRoute(
+          path: '/visits',
+          builder: (context, state) => const VisitListScreen(),
           routes: [
             GoRoute(
-              path: 'customer',
-              builder: (context, state) => const CustomerListScreen(),
-              routes: [
-                GoRoute(
-                  path: 'add',
-                  builder: (context, state) => const CustomerFormScreen(),
-                ),
-                GoRoute(
-                  path: 'edit/:id',
-                  builder: (context, state) {
-                    return CustomerFormScreen();
-                  },
-                ),
-              ],
+              path: 'add',
+              builder: (context, state) => const VisitFormScreen(),
             ),
             GoRoute(
-              path: 'visits',
-              builder: (context, state) => const VisitListScreen(),
-              routes: [
-                GoRoute(
-                  path: 'add',
-                  builder: (context, state) => const VisitFormScreen(),
-                ),
-                GoRoute(
-                  path: 'edit/:id',
-                  builder: (context, state) {
-                    return VisitFormScreen();
-                  },
-                ),
-                GoRoute(
-                  path: 'detail/:id',
-                  builder: (context, state) {
-                    return VisitDetailScreen(
-                      visit: Visit(
-                        id: 0,
-                        customerId: 0,
-                        visitDate: DateTime.now(),
-                        status: '',
-                        location: '',
-                        notes: '',
-                        activitiesDone: const [],
-                        createdAt: DateTime.now(),
-                      ),
-                      activities: const [],
-                    );
-                  },
-                ),
-                GoRoute(
-                  path: 'stats',
-                  builder: (context, state) => const VisitStatsScreen(),
-                ),
-              ],
+              path: 'edit/:id',
+              builder: (context, state) {
+                return VisitFormScreen();
+              },
             ),
             GoRoute(
-              path: 'activities',
-              builder: (context, state) => const ActivityListScreen(),
-              routes: [
-                GoRoute(
-                  path: 'add',
-                  builder: (context, state) => const ActivityFormScreen(),
-                ),
-                GoRoute(
-                  path: 'edit/:id',
-                  builder: (context, state) {
-                    return ActivityFormScreen();
-                  },
-                ),
-              ],
+              path: 'detail/:id',
+              builder: (context, state) {
+                return VisitDetailScreen(
+                  visit: Visit(
+                    id: 0,
+                    customerId: 0,
+                    visitDate: DateTime.now(),
+                    status: '',
+                    location: '',
+                    notes: '',
+                    activitiesDone: const [],
+                    createdAt: DateTime.now(),
+                  ),
+                  activities: const [],
+                );
+              },
+            ),
+            GoRoute(
+              path: 'stats',
+              builder: (context, state) => const VisitStatsScreen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/customer',
+          builder: (context, state) => const CustomerListScreen(),
+          routes: [
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const CustomerFormScreen(),
+            ),
+            GoRoute(
+              path: 'edit/:id',
+              builder: (context, state) {
+                return CustomerFormScreen();
+              },
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/activities',
+          builder: (context, state) => const ActivityListScreen(),
+          routes: [
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const ActivityFormScreen(),
+            ),
+            GoRoute(
+              path: 'edit/:id',
+              builder: (context, state) {
+                return ActivityFormScreen();
+              },
             ),
           ],
         ),

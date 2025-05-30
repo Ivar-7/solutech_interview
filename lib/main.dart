@@ -55,6 +55,7 @@ class _AppShellState extends State<AppShell> {
         selectedIndex: _index,
         onDestinationSelected: (i) {
           setState(() => _index = i);
+          // Use root navigation for absolute paths
           context.go(tabs[i]);
         },
         destinations: const [
