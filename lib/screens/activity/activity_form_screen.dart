@@ -38,6 +38,7 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
       } else {
         await provider.updateActivity(widget.activity!.id, _descController.text.trim());
       }
+      if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

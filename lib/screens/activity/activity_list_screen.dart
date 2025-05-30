@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/activity_provider.dart';
-import 'activity_form_screen.dart';
+// import 'activity_form_screen.dart';
 
 class ActivityListScreen extends StatefulWidget {
   const ActivityListScreen({super.key});
@@ -62,67 +62,76 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   subtitle: Text('Created: ${activity.createdAt.toLocal().toString().split(' ')[0]}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                        tooltip: 'Edit',
-                        onPressed: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ActivityFormScreen(activity: activity),
-                            ),
-                          );
-                          if (result == true) {
-                            Provider.of<ActivityProvider>(context, listen: false).loadActivities();
-                          }
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.redAccent),
-                        tooltip: 'Delete',
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Delete Activity'),
-                              content: const Text('Are you sure you want to delete this activity?'),
-                              actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                                TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
-                              ],
-                            ),
-                          );
-                          if (confirm == true) {
-                            await Provider.of<ActivityProvider>(context, listen: false).deleteActivity(activity.id);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  // trailing: Row(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     IconButton(
+                  //       icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                  //       tooltip: 'Edit',
+                  //       onPressed: () async {
+                  //         // Get provider before async operation
+                  //         final provider = Provider.of<ActivityProvider>(context, listen: false);
+                  //         final result = await Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (_) => ActivityFormScreen(activity: activity),
+                  //           ),
+                  //         );
+                  //         if (!mounted) return;
+                  //         if (result == true) {
+                  //           provider.loadActivities();
+                  //         }
+                  //       },
+                  //     ),
+                  //     IconButton(
+                  //       icon: const Icon(Icons.delete, color: Colors.redAccent),
+                  //       tooltip: 'Delete',
+                  //       onPressed: () async {
+                  //         // Get provider before async operation
+                  //         final provider = Provider.of<ActivityProvider>(context, listen: false);
+                  //         final confirm = await showDialog<bool>(
+                  //           context: context,
+                  //           builder: (ctx) => AlertDialog(
+                  //             title: const Text('Delete Activity'),
+                  //             content: const Text('Are you sure you want to delete this activity?'),
+                  //             actions: [
+                  //               TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                  //               TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+                  //             ],
+                  //           ),
+                  //         );
+                  //         if (!mounted) return;
+                  //         if (confirm == true) {
+                  //           await provider.deleteActivity(activity.id);
+                  //         }
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const ActivityFormScreen(),
-            ),
-          );
-          if (result == true) {
-            Provider.of<ActivityProvider>(context, listen: false).loadActivities();
-          }
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Add Activity'),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () async {
+      //     // Get provider before async operation
+      //     final provider = Provider.of<ActivityProvider>(context, listen: false);
+      //     final result = await Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (_) => const ActivityFormScreen(),
+      //       ),
+      //     );
+      //     if (!mounted) return;
+      //     if (result == true) {
+      //       provider.loadActivities();
+      //     }
+      //   },
+      //   icon: const Icon(Icons.add),
+      //   label: const Text('Add Activity'),
+      // ),
     );
   }
 }

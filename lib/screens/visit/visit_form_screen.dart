@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:solutech_interview/models/visit.dart';
 import 'package:solutech_interview/providers/visit_provider.dart';
 import 'package:solutech_interview/providers/activity_provider.dart';
+import 'package:solutech_interview/providers/customer_provider.dart'; // Add this import
 
 class VisitFormScreen extends StatefulWidget {
   final Visit? visit;
@@ -20,6 +21,7 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
   String _status = 'Pending';
   List<int> _selectedActivities = [];
   bool _isSubmitting = false;
+  int? _selectedCustomerId; // Add this variable
 
   @override
   void initState() {
@@ -29,8 +31,11 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
     _visitDate = widget.visit?.visitDate ?? DateTime.now();
     _status = widget.visit?.status ?? 'Pending';
     _selectedActivities = widget.visit?.activitiesDone ?? [];
+    _selectedCustomerId = widget.visit?.customerId; // Initialize with existing visit's customer ID
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ActivityProvider>(context, listen: false).loadActivities();
+      Provider.of<CustomerProvider>(context, listen: false).loadCustomers(); // Load customers
     });
   }
 
@@ -43,12 +48,20 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Validate customer is selected
+    if (_selectedCustomerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a customer')),
+      );
+      return;
+    }
     setState(() => _isSubmitting = true);
     final provider = Provider.of<VisitProvider>(context, listen: false);
     try {
       final visit = Visit(
         id: widget.visit?.id ?? 0,
-        customerId: 1, // TODO: Select customer
+        customerId: _selectedCustomerId!, // Use selected customer ID
         visitDate: _visitDate!,
         status: _status,
         location: _locationController.text.trim(),
@@ -61,19 +74,25 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
       } else {
         await provider.updateVisit(visit);
       }
+      if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     } finally {
-      setState(() => _isSubmitting = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final activities = Provider.of<ActivityProvider>(context).activities;
+    final customers = Provider.of<CustomerProvider>(context).customers;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.visit == null ? 'Add Visit' : 'Edit Visit'),
@@ -86,11 +105,37 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
             children: [
               const Text('Visit Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 16),
+
+              // Add Customer Dropdown
+              DropdownButtonFormField<int>(
+                value: _selectedCustomerId,
+                hint: const Text('Select Customer'),
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: 'Customer',
+                  prefixIcon: const Icon(Icons.person),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                items: customers.map((customer) {
+                  return DropdownMenuItem<int>(
+                    value: customer.id,
+                    child: Text(customer.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCustomerId = value;
+                  });
+                },
+                validator: (value) => value == null ? 'Please select a customer' : null,
+              ),
+              const SizedBox(height: 16),
+              
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
                   labelText: 'Location',
-                  prefixIcon: Icon(Icons.location_on),
+                  prefixIcon: const Icon(Icons.location_on),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (value) => value == null || value.trim().isEmpty ? 'Location required' : null,
@@ -100,7 +145,7 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
                 controller: _notesController,
                 decoration: InputDecoration(
                   labelText: 'Notes',
-                  prefixIcon: Icon(Icons.notes),
+                  prefixIcon: const Icon(Icons.notes),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 maxLines: 2,

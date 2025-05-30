@@ -38,6 +38,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
       } else {
         await provider.updateCustomer(widget.customer!.id, _nameController.text.trim());
       }
+      if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

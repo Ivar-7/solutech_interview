@@ -69,14 +69,17 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                         icon: const Icon(Icons.edit, color: Colors.blueAccent),
                         tooltip: 'Edit',
                         onPressed: () async {
+                          // Get provider before async operation
+                          final provider = Provider.of<CustomerProvider>(context, listen: false);
                           final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => CustomerFormScreen(customer: customer),
                             ),
                           );
+                          if (!mounted) return;
                           if (result == true) {
-                            Provider.of<CustomerProvider>(context, listen: false).loadCustomers();
+                            provider.loadCustomers();
                           }
                         },
                       ),
@@ -84,6 +87,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                         icon: const Icon(Icons.delete, color: Colors.redAccent),
                         tooltip: 'Delete',
                         onPressed: () async {
+                          // Get provider before async operation
+                          final provider = Provider.of<CustomerProvider>(context, listen: false);
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (ctx) => AlertDialog(
@@ -95,8 +100,9 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                               ],
                             ),
                           );
+                          if (!mounted) return;
                           if (confirm == true) {
-                            await Provider.of<CustomerProvider>(context, listen: false).deleteCustomer(customer.id);
+                            await provider.deleteCustomer(customer.id);
                           }
                         },
                       ),
@@ -110,14 +116,17 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          // Get provider before async operation
+          final provider = Provider.of<CustomerProvider>(context, listen: false);
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => const CustomerFormScreen(),
             ),
           );
+          if (!mounted) return;
           if (result == true) {
-            Provider.of<CustomerProvider>(context, listen: false).loadCustomers();
+            provider.loadCustomers();
           }
         },
         icon: const Icon(Icons.add),
