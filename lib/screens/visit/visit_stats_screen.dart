@@ -18,30 +18,43 @@ class VisitStatsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              child: ListTile(
-                title: const Text('Total Visits'),
-                trailing: Text('${visits.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
+            const Text('Your Visit Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _StatCard(label: 'Total', value: visits.length, color: Colors.blue),
+                _StatCard(label: 'Completed', value: completed, color: Colors.green),
+                _StatCard(label: 'Pending', value: pending, color: Colors.orange),
+                _StatCard(label: 'Cancelled', value: cancelled, color: Colors.red),
+              ],
             ),
-            Card(
-              child: ListTile(
-                title: const Text('Completed'),
-                trailing: Text('$completed', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                title: const Text('Pending'),
-                trailing: Text('$pending', style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                title: const Text('Cancelled'),
-                trailing: Text('$cancelled', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-              ),
-            ),
+            const SizedBox(height: 32),
+            // Optionally add more charts or breakdowns here
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final int value;
+  final Color color;
+  const _StatCard({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: color.withOpacity(0.1),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          children: [
+            Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('$value', style: TextStyle(fontSize: 20, color: color, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

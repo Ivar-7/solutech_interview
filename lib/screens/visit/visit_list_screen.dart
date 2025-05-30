@@ -23,16 +23,18 @@ class _VisitListScreenState extends State<VisitListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Visits'),
+        title: const Text('Track Your Visits'),
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),
+            tooltip: 'View Visit Statistics',
             onPressed: () {
               context.go('/visits/stats');
             },
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
             onPressed: () => Provider.of<VisitProvider>(context, listen: false).loadVisits(),
           ),
         ],
@@ -46,59 +48,50 @@ class _VisitListScreenState extends State<VisitListScreen> {
             return Center(child: Text('Error: ${provider.error}'));
           }
           if (provider.visits.isEmpty) {
-            return const Center(child: Text('No visits found.'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('No visits yet. Start by adding your first visit!', style: TextStyle(fontSize: 18)),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Visit'),
+                    onPressed: () => context.go('/visits/add'),
+                  ),
+                ],
+              ),
+            );
           }
           return ListView.separated(
+            padding: const EdgeInsets.only(top: 16, bottom: 80),
             itemCount: provider.visits.length,
             separatorBuilder: (_, __) => const Divider(),
             itemBuilder: (context, index) {
               final visit = provider.visits[index];
-              return ListTile(
-                title: Text('Visit #${visit.id} - ${visit.status}'),
-                subtitle: Text('Date: ${visit.visitDate.toLocal()}\nLocation: ${visit.location}'),
-                onTap: () {
-                  context.go('/visits/detail/${visit.id}');
-                },
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () async {
-                        context.go('/visits/edit/${visit.id}');
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        final confirm = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text('Delete Visit'),
-                            content: const Text('Are you sure you want to delete this visit?'),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                              TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
-                            ],
-                          ),
-                        );
-                        if (confirm == true) {
-                          await Provider.of<VisitProvider>(context, listen: false).deleteVisit(visit.id);
-                        }
-                      },
-                    ),
-                  ],
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: ListTile(
+                  title: Text('Visit #${visit.id} - ${visit.status}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('Date: ${visit.visitDate.toLocal().toString().split(' ')[0]}\nLocation: ${visit.location}'),
+                  onTap: () {
+                    context.go('/visits/detail/${visit.id}');
+                  },
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: 'Edit Visit',
+                    onPressed: () => context.go('/visits/edit/${visit.id}'),
+                  ),
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          context.go('/visits/add');
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.go('/visits/add'),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Visit'),
       ),
     );
   }

@@ -17,75 +17,77 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const CustomerListScreen(),
-          routes: [
-            GoRoute(
-              path: 'customer/add',
-              builder: (context, state) => const CustomerFormScreen(),
-            ),
-            GoRoute(
-              path: 'customer/edit/:id',
-              builder: (context, state) {
-                // fetch customer by id or pass via extra
-                return CustomerFormScreen();
-              },
-            ),
-          ],
-        ),
-        GoRoute(
-          path: '/visits',
           builder: (context, state) => const VisitListScreen(),
           routes: [
             GoRoute(
-              path: 'add',
-              builder: (context, state) => const VisitFormScreen(),
+              path: 'customer',
+              builder: (context, state) => const CustomerListScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const CustomerFormScreen(),
+                ),
+                GoRoute(
+                  path: 'edit/:id',
+                  builder: (context, state) {
+                    return CustomerFormScreen();
+                  },
+                ),
+              ],
             ),
             GoRoute(
-              path: 'edit/:id',
-              builder: (context, state) {
-                // fetch visit by id or pass via extra
-                return VisitFormScreen();
-              },
+              path: 'visits',
+              builder: (context, state) => const VisitListScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const VisitFormScreen(),
+                ),
+                GoRoute(
+                  path: 'edit/:id',
+                  builder: (context, state) {
+                    return VisitFormScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'detail/:id',
+                  builder: (context, state) {
+                    return VisitDetailScreen(
+                      visit: Visit(
+                        id: 0,
+                        customerId: 0,
+                        visitDate: DateTime.now(),
+                        status: '',
+                        location: '',
+                        notes: '',
+                        activitiesDone: const [],
+                        createdAt: DateTime.now(),
+                      ),
+                      activities: const [],
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: 'stats',
+                  builder: (context, state) => const VisitStatsScreen(),
+                ),
+              ],
             ),
             GoRoute(
-              path: 'detail/:id',
-              builder: (context, state) {
-                // fetch visit by id or pass via extra
-                return VisitDetailScreen(
-                  visit: Visit(
-                    id: 0,
-                    customerId: 0,
-                    visitDate: DateTime.now(),
-                    status: '',
-                    location: '',
-                    notes: '',
-                    activitiesDone: const [],
-                    createdAt: DateTime.now(),
-                  ),
-                  activities: const [],
-                );
-              },
-            ),
-            GoRoute(
-              path: 'stats',
-              builder: (context, state) => const VisitStatsScreen(),
-            ),
-          ],
-        ),
-        GoRoute(
-          path: '/activities',
-          builder: (context, state) => const ActivityListScreen(),
-          routes: [
-            GoRoute(
-              path: 'add',
-              builder: (context, state) => const ActivityFormScreen(),
-            ),
-            GoRoute(
-              path: 'edit/:id',
-              builder: (context, state) {
-                // fetch activity by id or pass via extra
-                return ActivityFormScreen();
-              },
+              path: 'activities',
+              builder: (context, state) => const ActivityListScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const ActivityFormScreen(),
+                ),
+                GoRoute(
+                  path: 'edit/:id',
+                  builder: (context, state) {
+                    return ActivityFormScreen();
+                  },
+                ),
+              ],
             ),
           ],
         ),
