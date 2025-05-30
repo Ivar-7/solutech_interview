@@ -70,7 +70,7 @@ class Visit {
       'status': status,
       'location': location,
       'notes': notes,
-      'activities_done': activitiesDone.map((e) => e.toString()).toList(),
+      'activities_done': activitiesDone,
       'created_at': createdAt.toIso8601String(),
     };
   }

@@ -5,8 +5,13 @@ import 'providers/visit_provider.dart';
 import 'providers/activity_provider.dart';
 import 'app_router.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('visits');
+  await Hive.openBox('pending_visits');
   runApp(
     MultiProvider(
       providers: [

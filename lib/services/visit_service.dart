@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
 import '../models/visit.dart';
 import 'api_service.dart';
 
@@ -8,12 +9,18 @@ class VisitService {
   static Map<String, String> get headers => ApiService.headers;
 
   Future<List<Visit>> fetchVisits() async {
-    final response = await http.get(Uri.parse('$baseUrl/visits'), headers: headers);
-    if (response.statusCode == 200) {
-      final List data = json.decode(response.body);
-      return data.map((e) => Visit.fromJson(e)).toList();
-    } else {
-      throw Exception('Failed to load visits');
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/visits'), headers: headers);
+      if (response.statusCode == 200) {
+        final List data = json.decode(response.body);
+        return data.map((e) => Visit.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load visits');
+      }
+    } catch (e) {
+      // Fallback to local if offline
+      final local = Hive.box('visits').get('all', defaultValue: []);
+      return (local as List).map((e) => Visit.fromJson(Map<String, dynamic>.from(e))).toList();
     }
   }
 
