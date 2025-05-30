@@ -64,7 +64,7 @@ class Visit {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // 'id': id, // Remove id from POST body to avoid identity column error
       'customer_id': customerId,
       'visit_date': visitDate.toIso8601String(),
       'status': status,

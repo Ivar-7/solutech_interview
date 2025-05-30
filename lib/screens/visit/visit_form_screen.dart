@@ -61,7 +61,7 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
     try {
       final visit = Visit(
         id: widget.visit?.id ?? 0,
-        customerId: _selectedCustomerId!, // Use selected customer ID
+        customerId: _selectedCustomerId!,
         visitDate: _visitDate!,
         status: _status,
         location: _locationController.text.trim(),
@@ -78,9 +78,13 @@ class _VisitFormScreenState extends State<VisitFormScreen> {
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
+      Navigator.pop(context);
+      // Show user-friendly error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('Failed to save visit. Please try again.')),
       );
+      // Print debug info
+      debugPrint('Error in VisitFormScreen _submit: $e');
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);

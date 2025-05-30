@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 import '../models/visit.dart';
@@ -31,9 +32,20 @@ class VisitService {
       body: json.encode(visit.toJson()),
     );
     if (response.statusCode == 201 || response.statusCode == 200) {
-      return Visit.fromJson(json.decode(response.body));
+      try {
+        return Visit.fromJson(json.decode(response.body));
+      } catch (e) {
+        if (kDebugMode) {
+          print('FormatException in createVisit: ${response.body}');
+        }
+        // If response body is empty, return the original visit (with id possibly missing)
+        return visit;
+      }
     } else {
-      throw Exception('Failed to create visit');
+      if (kDebugMode) {
+        print('Error creating visit: ${response.body}');
+      }
+      throw Exception('Failed to create visit: ${response.body}');
     }
   }
 

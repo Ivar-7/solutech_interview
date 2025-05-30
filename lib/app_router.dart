@@ -1,4 +1,8 @@
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:solutech_interview/providers/activity_provider.dart';
+import 'package:solutech_interview/providers/customer_provider.dart';
+import 'package:solutech_interview/providers/visit_provider.dart';
 import 'package:solutech_interview/screens/customer/customer_list_screen.dart';
 import 'package:solutech_interview/screens/customer/customer_form_screen.dart';
 import 'package:solutech_interview/screens/visit/visit_list_screen.dart';
@@ -8,6 +12,7 @@ import 'package:solutech_interview/screens/visit/visit_stats_screen.dart';
 import 'package:solutech_interview/screens/activity/activity_list_screen.dart';
 import 'package:solutech_interview/screens/activity/activity_form_screen.dart';
 import 'package:solutech_interview/models/visit.dart';
+import 'package:solutech_interview/models/customer.dart';
 import 'main.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -36,10 +41,17 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: 'detail/:id',
               builder: (context, state) {
-                return VisitDetailScreen(
-                  visit: Visit(
-                    id: 0,
-                    customerId: 0,
+                final visitId = int.parse(state.pathParameters['id']!);
+                final visitProvider = Provider.of<VisitProvider>(context);
+                final customerProvider = Provider.of<CustomerProvider>(context);
+                final activityProvider = Provider.of<ActivityProvider>(context);
+
+                // Get the visit, customer, and activities from providers (assume loaded by list screen)
+                final visit = visitProvider.visits.firstWhere(
+                  (v) => v.id == visitId,
+                  orElse: () => Visit(
+                    id: -1,
+                    customerId: -1,
                     visitDate: DateTime.now(),
                     status: '',
                     location: '',
@@ -47,7 +59,17 @@ final GoRouter appRouter = GoRouter(
                     activitiesDone: const [],
                     createdAt: DateTime.now(),
                   ),
-                  activities: const [],
+                );
+                final customer = customerProvider.customers.firstWhere(
+                  (c) => c.id == visit.customerId,
+                  orElse: () => Customer(id: -1, name: 'Unknown', createdAt: DateTime.now()),
+                );
+                final activities = activityProvider.activities;
+
+                return VisitDetailScreen(
+                  visit: visit,
+                  customer: customer,
+                  activities: activities,
                 );
               },
             ),
