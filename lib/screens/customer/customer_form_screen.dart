@@ -55,24 +55,34 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
         title: Text(widget.customer == null ? 'Add Customer' : 'Edit Customer'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Customer Name'),
+                decoration: const InputDecoration(
+                  labelText: 'Customer Name',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
                 validator: (value) => value == null || value.trim().isEmpty ? 'Name required' : null,
               ),
               const SizedBox(height: 24),
               _isSubmitting
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
+                        icon: Icon(widget.customer == null ? Icons.add : Icons.save),
                         onPressed: _submit,
-                        child: Text(widget.customer == null ? 'Add' : 'Update'),
+                        label: Text(widget.customer == null ? 'Add Customer' : 'Update Customer'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
             ],

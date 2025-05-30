@@ -45,7 +45,7 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int _index = 0; // Now Visits is the first tab
-  static const tabs = ['/visits', '/', '/activities'];
+  static const tabs = ['/visits', '/customer', '/activities'];
 
   @override
   Widget build(BuildContext context) {

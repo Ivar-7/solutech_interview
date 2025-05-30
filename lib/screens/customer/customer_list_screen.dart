@@ -43,57 +43,72 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             return const Center(child: Text('No customers found.'));
           }
           return ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
             itemCount: provider.customers.length,
-            separatorBuilder: (_, __) => const Divider(),
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final customer = provider.customers[index];
-              return ListTile(
-                title: Text(customer.name),
-                subtitle: Text('Created: ${customer.createdAt.toLocal()}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CustomerFormScreen(customer: customer),
-                          ),
-                        );
-                        if (result == true) {
-                          Provider.of<CustomerProvider>(context, listen: false).loadCustomers();
-                        }
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        final confirm = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text('Delete Customer'),
-                            content: const Text('Are you sure you want to delete this customer?'),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                              TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
-                            ],
-                          ),
-                        );
-                        if (confirm == true) {
-                          await Provider.of<CustomerProvider>(context, listen: false).deleteCustomer(customer.id);
-                        }
-                      },
-                    ),
-                  ],
+              return Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: const Icon(Icons.person, color: Colors.white),
+                  ),
+                  title: Text(
+                    customer.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  subtitle: Text('Created: ${customer.createdAt.toLocal().toString().split(' ')[0]}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                        tooltip: 'Edit',
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CustomerFormScreen(customer: customer),
+                            ),
+                          );
+                          if (result == true) {
+                            Provider.of<CustomerProvider>(context, listen: false).loadCustomers();
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent),
+                        tooltip: 'Delete',
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Delete Customer'),
+                              content: const Text('Are you sure you want to delete this customer?'),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                                TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            await Provider.of<CustomerProvider>(context, listen: false).deleteCustomer(customer.id);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -105,7 +120,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             Provider.of<CustomerProvider>(context, listen: false).loadCustomers();
           }
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Customer'),
       ),
     );
   }
